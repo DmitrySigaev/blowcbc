@@ -7,8 +7,9 @@ const BlockSize = 8
 
 // A Cipher is an instance of Blowfish encryption using a particular key.
 type Cipher struct {
-	p              [18]uint32
+	p              [268]uint32
 	s0, s1, s2, s3 [256]uint32
+	round          int
 }
 
 type KeySizeError int
@@ -41,7 +42,7 @@ func NewSaltedCipher(key, salt []byte) (*Cipher, error) {
 	if k := len(key); k < 1 {
 		return nil, KeySizeError(k)
 	}
-	initCipher(&result)
+	initCipher(&result, 16)
 	expandKeyWithSalt(key, salt, &result)
 	return &result, nil
 }
@@ -74,10 +75,11 @@ func (c *Cipher) Decrypt(dst, src []byte) {
 	dst[4], dst[5], dst[6], dst[7] = byte(r>>24), byte(r>>16), byte(r>>8), byte(r)
 }
 
-func initCipher(c *Cipher) {
+func initCipher(c *Cipher, round int) {
 	copy(c.p[0:], p[0:])
 	copy(c.s0[0:], s0[0:])
 	copy(c.s1[0:], s1[0:])
 	copy(c.s2[0:], s2[0:])
 	copy(c.s3[0:], s3[0:])
+	c.round = round
 }
