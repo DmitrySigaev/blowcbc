@@ -119,7 +119,7 @@ func encryptBlock(l, r uint32, c *Cipher) (uint32, uint32) {
 		xr = round(xr, xl, i+1, c)
 		xl = round(xl, xr, i+2, c)
 	}
-	xr ^= p[c.round+1]
+	xr ^= c.p[c.round+1]
 	return xr, xl
 }
 
