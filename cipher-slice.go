@@ -25,7 +25,7 @@ func NewCipher(key []byte) (*Cipher, error) {
 	if k := len(key); k < 1 || k > 56 {
 		return nil, KeySizeError(k)
 	}
-	initCipher(&result)
+	initCipher(&result, 16)
 	ExpandKey(key, &result)
 	return &result, nil
 }
