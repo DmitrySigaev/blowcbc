@@ -1,6 +1,9 @@
 package blowcbc // import "github.com/dmitrysigaev/blowcbc"
 
-import "strconv"
+import (
+	"strconv",
+	"crypto/rand"
+)
 
 // The Blowfish block size in bytes.
 const BlockSize = 8
@@ -95,6 +98,28 @@ func padDataEn(data []byte, length int) ([]byte, int) {
 		outData[i] = (outData[length-1+8] ^ 0xCC) //fill the padding with a character that is different from the last character in the plaintext, so we can find the end later
 	}
 	return outData, paddedLength
+}
+
+func (c *Cipher) EnCrypt_CBC(data []byte, length int) ([]byte, int) {
+
+	len, err := rand.Read(c.IV)
+	if len !=8 && err != nil {
+		return data, length
+	}
+
+	outData, newlength := padDataEn(data, length)
+	for i := 0; i < 8; i++ {
+		outData[i] = c.IV[i]
+	}
+
+	for i := 8; i < newlength; i += 8 { //run the encryption
+		for k := 0; k < 8; k++ {
+			outData[i+k] ^= outData[k+i-8]
+		}
+		c.EncryptBlock(outData[i:i+8], outData[i:i+8])
+	}
+
+	return outData, newlength
 }
 
 func padDataDe(data []byte, length int) ([]byte, int) {
