@@ -80,13 +80,13 @@ func (c *Cipher) DecryptBlock(dst, src []byte) {
 }
 
 func padDataEn(data []byte, length int) ([]byte, int) {
-	paddedLength := 8
+	paddedLength := 16
 
 	//if IvSpace, leave a blank block at the front
 	if length&7 == 0 {
 		paddedLength += length
 	} else { //pad the data to a multiple of 8 plus one block
-		paddedLength += length + 8 - (length & 8) + 8
+		paddedLength += length + 8 - (length & 7)
 	}
 	//fill the new array with the data
 	outData := make([]byte, paddedLength)
