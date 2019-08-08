@@ -1,8 +1,8 @@
 package blowcbc // import "github.com/dmitrysigaev/blowcbc"
 
 import (
-	"strconv",
 	"crypto/rand"
+	"strconv"
 )
 
 // The Blowfish block size in bytes.
@@ -101,9 +101,8 @@ func padDataEn(data []byte, length int) ([]byte, int) {
 }
 
 func (c *Cipher) EnCrypt_CBC(data []byte, length int) ([]byte, int) {
-
-	len, err := rand.Read(c.IV)
-	if len !=8 && err != nil {
+	len, err := rand.Read(c.IV[:])
+	if len != 8 && err != nil {
 		return data, length
 	}
 
